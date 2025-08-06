@@ -1,0 +1,14 @@
+{
+  "name": "nodejs-buffer-test",
+  "version": "1.0.0",
+  "description": "Node.js Buffer Size Testing Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test-large-file.js",
+    "check-buffer": "node check-buffer-limit.js",
+    "create-big-file": "dd if=/dev/zero of=bigFile.txt bs=1024 count=2621440"
+  },
+  "keywords": ["nodejs", "buffer", "file-size", "testing"],
+  "author": "xiaogangwen",
+  "license": "ISC"
+}

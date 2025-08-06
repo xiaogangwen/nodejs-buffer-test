@@ -1,0 +1,50 @@
+name: Node.js Buffer Size Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_size_gb:
+        description: 'Size of test file in GB'
+        required: false
+        default: '2.5'
+        type: string
+
+jobs:
+  buffer-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Check buffer limits
+      run: npm run check-buffer
+    
+    - name: Create large test file
+      run: |
+        echo "Creating ${{ github.event.inputs.file_size_gb }}GB test file..."
+        SIZE_KB=$(echo "${{ github.event.inputs.file_size_gb }} * 1024 * 1024" | bc)
+        dd if=/dev/zero of=bigFile.txt bs=1024 count=$SIZE_KB
+        ls -lh bigFile.txt
+    
+    - name: Test reading large file
+      run: |
+        echo "Testing file read with Node.js..."
+        npm test
+      continue-on-error: true
+    
+    - name: Show results
+      run: |
+        echo "=== Test Results ==="
+        echo "File size: $(ls -lh bigFile.txt | awk '{print $5}')"
+        echo "Node.js version: $(node --version)"
+        echo "Buffer test completed!"
