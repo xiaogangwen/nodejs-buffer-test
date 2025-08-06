@@ -33,6 +33,7 @@ jobs:
       run: |
         echo "Creating ${{ github.event.inputs.file_size_gb }}GB test file..."
         SIZE_KB=$(echo "${{ github.event.inputs.file_size_gb }} * 1024 * 1024" | bc)
+        echo ${SIZE_KB}
         dd if=/dev/zero of=bigFile.txt bs=1024 count=${SIZE_KB}
         ls -lh bigFile.txt
     
